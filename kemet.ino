@@ -8,7 +8,7 @@ char ssid[] = "xxx";
 char pass[] = "xxxxxx";
 
 unsigned long PyroRead = 0;
-int Pyro=5;  //D1 of MCU
+int Pyro=5;  //SS-430 to D1 of MCU
 unsigned long IR_threshold = 200000;
 int state=1;
 int IR_sensed = 0;
@@ -16,20 +16,19 @@ int relay=16; //D0 of MCU
 
 int Sensor_Pin = A0;//current sensor
 unsigned int Sensitivity = 185;   // 185mV/A for 5A, 100 mV/A for 20A and 66mV/A for 30A Module
-float Vpp = 0; //
+float Vpp = 0; //peak to peak voltage
 float Vrms = 0; // rms voltage
 float Irms = 0; // rms current
 float Supply_Voltage = 230.0;    
-float Vcc = 3.0;         // ADC reference voltage // voltage at 5V pin 
+float Vcc = 3.0;         // ADC reference voltage // voltage at 3V pin 
 float power = 0;         // power in watt             
 unsigned long last_time =0;
 unsigned long current_time =0;
-unsigned long interval = 100;
 unsigned int calibration = 100; 
-unsigned int pF = 85;    
+unsigned int pF = 85;  //power factor  
 float Wh =0 ;
 float bill_amount = 0; 
-unsigned int energyTariff = 5.0;
+unsigned int energyTariff = 5.0;//as per your country rules
 
  
 void setup() {
@@ -70,13 +69,13 @@ if(state==1)
   
  Wh = Wh+  power *(( current_time -last_time) /3600000.0) ; // calculating energy in Watt-Hour
  bill_amount = Wh*(energyTariff/1000);
- Blynk.virtualWrite(V2,"ON");
+ Blynk.virtualWrite(V2,"ON");//changing state in blynk
 }
 if(state==0)
 {
   Serial.println("LOW");
   Serial.println(bill_amount);
-  Blynk.virtualWrite(V1, bill_amount);
+  Blynk.virtualWrite(V1, bill_amount);// printing rate in blynk
   Blynk.virtualWrite(V2,"OFF") ;
 }
 
