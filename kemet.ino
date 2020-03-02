@@ -3,17 +3,18 @@
 BlynkTimer timer;
 #define BLYNK_PRINT Serial
 
-char auth[] = "Y4GKeusFpVLXHpN7nJFknjJCagIFzuyY";
-char ssid[] = "a";
-char pass[] = "password";
+char auth[] = "Y4GKeusFpVLXHpN7nJFknjJxxxxxx";
+char ssid[] = "xxx";
+char pass[] = "xxxxxx";
 
 unsigned long PyroRead = 0;
-int Pyro=5;
+int Pyro=5;  //D1 of MCU
 unsigned long IR_threshold = 200000;
 int state=1;
 int IR_sensed = 0;
+int relay=16; //D0 of MCU
 
-int Sensor_Pin = A0;
+int Sensor_Pin = A0;//current sensor
 unsigned int Sensitivity = 185;   // 185mV/A for 5A, 100 mV/A for 20A and 66mV/A for 30A Module
 float Vpp = 0; //
 float Vrms = 0; // rms voltage
@@ -32,13 +33,13 @@ unsigned int energyTariff = 5.0;
 
  
 void setup() {
-pinMode (16, OUTPUT); //LED Connected to 
-pinMode (Pyro,INPUT); // IR Sensor connected to D2
+pinMode (relay, OUTPUT); //relay
+pinMode (Pyro,INPUT); //kemet sensor
 pinMode(Sensor_Pin,INPUT);//sensor is connected to A0
 Serial.begin(9600);
 Blynk.begin(auth, ssid, pass);
 }
-BLYNK_WRITE(V4) {  // calibration slider 50 to 200
+BLYNK_WRITE(V4) {  // calibration slider 
     calibration = param.asInt();}
 void loop() {
 timer.run();
@@ -50,7 +51,7 @@ while ((IR_sensed < 2))
       IR_sensed++;
    }
 }   
-digitalWrite(16,state);
+digitalWrite(relay,state);
 
 if(state==1)
 {
@@ -75,7 +76,7 @@ if(state==0)
 {
   Serial.println("LOW");
   Serial.println(bill_amount);
-  Blynk.virtualWrite(V1, bill_amount+150);
+  Blynk.virtualWrite(V1, bill_amount);
   Blynk.virtualWrite(V2,"OFF") ;
 }
 
